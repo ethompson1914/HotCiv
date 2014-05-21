@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="alphaciv" default="help" basedir=".">
+	
+	<property name="src-dir"   		value="src"/>
+	<property name="test-src-dir"   value="test"/>
+	<property name="build-dir"      value="build-dir"/>
+	<property name="javadoc-dir"    value="javadoc"/>
+	<property name="junit-path"     value="lib/junit-4.4.jar" />
+	<property name="fractal-path"	value="fractal.jar" />
+	
+	<path id="class-path">
+		<pathelement location="${build-dir}"/>
+		<pathelement location="${junit-path}"/>
+		<pathelement location="${test-src-dir}"/>
+		<pathelement location="${fractal-path}"/>
+	</path>
+	
+	<target name="clean">
+		<delete dir="${build-dir}"/>
+		<delete dir="${javadoc-dir}"/>
+	</target>
+	
+	<target name="prepare">
+		<mkdir dir="${build-dir}"/>
+		<mkdir dir="${javadoc-dir}"/>
+	</target>
+	
+	<target name="help">
+		<echo> 
+HotCiv build management.
+Targets:
+build-all:      Builds production code.
+clean:         Removes all bytecode.
+javadoc:       Generate JavaDoc.
+		</echo>
+	</target>
+
+	<target name="build-src" depends="prepare">
+		<javac srcdir="${src-dir}" destdir="${build-dir}">
+			<classpath refid="class-path"/>
+		</javac>	
+	</target>
+	
+	<target name="build-test" depends="build-src">
+		<javac srcdir="${test-src-dir}" destdir="${build-dir}">
+			<classpath refid="class-path"/>
+		</javac>	
+	</target>
+	
+	<target name="build-all" depends="build-src,build-test"/>
+	
+	<target name="test" depends="build-all">
+		<java classname="org.junit.runner.JUnitCore">
+			<arg value="hotciv.standard.TestAlphaCiv"/>
+			<arg value="hotciv.standard.TestBetaCiv"/>
+			<arg value="hotciv.standard.TestGammaCiv"/>
+			<arg value="hotciv.standard.TestDeltaCiv"/>
+			<arg value="hotciv.standard.TestUtility"/>
+			<arg value="hotciv.standard.epsilon.TestEpsilonCiv"/>
+			<arg value="hotciv.standard.zeta.TestZetaCiv"/>
+			<arg value="hotciv.standard.semi.TestSemiCiv"/>
+			<arg value="hotciv.standard.TestLoggingGame"/>
+			<arg value="hotciv.standard.TestAttackHeuristics"/>
+			<arg value="hotciv.standard.TestMoveHeuristics"/>
+			<arg value="hotciv.standard.TestFractalWorldCreation"/>
+			<classpath refid="class-path"/>
+		</java>
+	</target>
+	
+	  <!-- generate javadoc -->
+	  <target name="javadoc" depends="prepare">
+	    <javadoc
+	      	packagenames="hotciv.*"
+	      	destdir="${javadoc-dir}"
+	      	sourcepath="${src-dir}"
+	      	windowtitle="HotCiv system">
+	      	<fileset dir="${basedir}/" includes="**/*.java"/>
+	      <classpath refid="class-path"/>
+	    </javadoc>
+	    <echo>
+JavaDoc available in directory ${javadoc-dir}/index.html.
+	    </echo>
+	  </target>
+		
+</project>
